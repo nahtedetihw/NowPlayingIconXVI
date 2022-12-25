@@ -1,4 +1,4 @@
-![download]([https://i.ibb.co/wds8v8M/banner.png](https://i.ibb.co/qWdWjKK/IMG-0008.jpg))
+![download](https://i.ibb.co/qWdWjKK/IMG-0008.jpg)
 
 
 # NowPlayingIconXVI
