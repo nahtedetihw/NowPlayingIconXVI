@@ -1,0 +1,9 @@
+Package: com.nahtedetihw.nowplayingiconxvi
+Name: NowPlayingIconXVI
+Version: 1.0
+Architecture: iphoneos-arm
+Description: Change your now playing app icon to the album artwork of currently playing music!
+Maintainer: Ethan Whited
+Author: Ethan Whited
+Section: Tweaks
+Depends: mobilesubstrate
