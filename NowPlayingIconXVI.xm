@@ -14,7 +14,6 @@
 NSString *lastNowPlayingBundleID;
 UIImage *currentArtwork;
 UIImage *currentMaskedArtwork;
-static dispatch_once_t onceToken;
 
 %hook SBMediaController
 -(void)_setNowPlayingApplication:(id)arg1 {
@@ -28,24 +27,12 @@ static dispatch_once_t onceToken;
 
 -(void)_mediaRemoteNowPlayingInfoDidChange:(id)arg1 {
     %orig;
-    // set a delay to prevent multiple notifications
-    dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC * 0.75);
-    dispatch_after(delay, dispatch_get_main_queue(), ^(void){
-        // only call once so we can ensure we don't get multiple notifications
-        dispatch_once(&onceToken, ^{
-            // post notification when now playing info changes
-            if (arg1 != nil) [[NSNotificationCenter defaultCenter] postNotificationName:@"NowPlayingInfoChanged" object:nil];
-       });
-   });
-    // reset our once call after our deflay of 0.75 and animations of 1.0
-    dispatch_time_t delay2 = dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC * 1.75);
-    dispatch_after(delay2, dispatch_get_main_queue(), ^(void){
-        onceToken = 0;
-    });
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"NowPlayingInfoChanged" object:nil];
 }
 %end
 
 %hook SBIconController
+// iOS 13-14
 -(instancetype)initWithApplicationController:(id)arg1 applicationPlaceholderController:(id)arg2 userInterfaceController:(id)arg3 policyAggregator:(id)arg4 alertItemsController:(id)arg5 assistantController:(id)arg6 {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(nowPlayingAppDidChange) name:@"NowPlayingAppChanged" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(nowPlayingAppDidTerminate) name:@"NowPlayingAppTerminated" object:nil];
@@ -53,6 +40,7 @@ static dispatch_once_t onceToken;
   return %orig;
 }
 
+// iOS 15
 -(id)initWithApplicationController:(id)arg1 applicationPlaceholderController:(id)arg2 userInterfaceController:(id)arg3 policyAggregator:(id)arg4 alertItemsController:(id)arg5 assistantController:(id)arg6 powerLogAggregator:(id)arg7 {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(nowPlayingAppDidChange) name:@"NowPlayingAppChanged" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(nowPlayingAppDidTerminate) name:@"NowPlayingAppTerminated" object:nil];
@@ -60,6 +48,7 @@ static dispatch_once_t onceToken;
     return %orig;
 }
 
+// iOS 16
 - (id)initWithMainDisplayWindowScene:(id)arg1 {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(nowPlayingAppDidChange) name:@"NowPlayingAppChanged" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(nowPlayingAppDidTerminate) name:@"NowPlayingAppTerminated" object:nil];
@@ -77,7 +66,6 @@ static dispatch_once_t onceToken;
             NSData *oldArtworkData = UIImageJPEGRepresentation(currentArtwork, 1.0);
             NSData *newArtworkData = UIImageJPEGRepresentation([UIImage imageWithData:artworkData], 1.0);
             if ([oldArtworkData isEqualToData:newArtworkData]) {
-                //HBLogInfo(@"NowPlayingIcon || Duplicate artwork data");
                 return;
             } else {
                 currentArtwork = [UIImage imageWithData:artworkData];
@@ -90,7 +78,7 @@ static dispatch_once_t onceToken;
             SBApplicationIcon *appIcon = [iconController.model applicationIconForBundleIdentifier:bundleID];
             
             //Set artwork for app
-            [self setNowPlayingArtworkForApp:appIcon withArtwork:currentArtwork];
+            if (currentArtwork != nil) [self setNowPlayingArtworkForApp:appIcon withArtwork:currentArtwork];
             lastNowPlayingBundleID = nowPlayingApp.bundleIdentifier;
             }
         }
@@ -99,7 +87,7 @@ static dispatch_once_t onceToken;
 
 %new
 -(void)nowPlayingAppDidChange {
-    //Reset last icon when the app has changed or the now playing app is killed
+    //Reset last icon when the app has changed
     SBIconController *iconController = [%c(SBIconController) sharedInstance];
     if (lastNowPlayingBundleID != nil) {
         SBApplicationIcon *appIcon = [iconController.model applicationIconForBundleIdentifier:lastNowPlayingBundleID];
@@ -169,30 +157,36 @@ static dispatch_once_t onceToken;
 -(instancetype)initWithImageView:(SBIconImageView *)arg1 crossfadeView:(UIView *)arg2 {
     SBIcon *icon = [arg1 icon];
     SBApplication *nowPlayingApp = [[%c(SBMediaController) sharedInstance] nowPlayingApplication];
-    if ([[icon applicationBundleID] isEqualToString:nowPlayingApp.bundleIdentifier] && currentMaskedArtwork) {
-        CATransition *transition = [CATransition animation];
-        transition.duration = 1.0f;
-        transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-        transition.type = kCATransitionFade;
-        [arg1.layer addAnimation:transition forKey:nil];
-      
-        arg1.layer.contents = (id)currentMaskedArtwork.CGImage;
+    NSString *bundleID = nowPlayingApp.bundleIdentifier;
+    if (bundleID != nil) {
+        if ([[icon applicationBundleID] isEqualToString:bundleID] && currentMaskedArtwork) {
+            CATransition *transition = [CATransition animation];
+            transition.duration = 1.0f;
+            transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+            transition.type = kCATransitionFade;
+            [arg1.layer addAnimation:transition forKey:nil];
+            
+            arg1.layer.contents = (id)currentMaskedArtwork.CGImage;
+        }
     }
     return %orig;
 }
 
-//iOS 14
+//iOS 14+
 -(instancetype)initWithSource:(SBIconImageView *)arg1 crossfadeView:(UIView *)arg2 {
     SBIcon *icon = [arg1 icon];
     SBApplication *nowPlayingApp = [[%c(SBMediaController) sharedInstance] nowPlayingApplication];
-    if ([[icon applicationBundleID] isEqualToString:nowPlayingApp.bundleIdentifier] && currentMaskedArtwork) {
-        CATransition *transition = [CATransition animation];
-        transition.duration = 1.0f;
-        transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-        transition.type = kCATransitionFade;
-        [arg1.layer addAnimation:transition forKey:nil];
-        
-        arg1.layer.contents = (id)currentMaskedArtwork.CGImage;
+    NSString *bundleID = nowPlayingApp.bundleIdentifier;
+    if (bundleID != nil) {
+        if ([[icon applicationBundleID] isEqualToString:bundleID] && currentMaskedArtwork) {
+            CATransition *transition = [CATransition animation];
+            transition.duration = 1.0f;
+            transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+            transition.type = kCATransitionFade;
+            [arg1.layer addAnimation:transition forKey:nil];
+            
+            arg1.layer.contents = (id)currentMaskedArtwork.CGImage;
+        }
     }
     return %orig;
 }
