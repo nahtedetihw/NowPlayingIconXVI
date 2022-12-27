@@ -61,5 +61,6 @@
 +(instancetype)sharedInstance;
 
   //NowPlayingIcon
+- (void)registerForNowPlayingNotifications;
 -(void)setNowPlayingArtworkForApp:(SBApplicationIcon *)appIcon withArtwork:(UIImage *)artwork;
 @end

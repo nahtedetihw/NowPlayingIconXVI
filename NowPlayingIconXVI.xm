@@ -34,32 +34,33 @@ UIImage *currentMaskedArtwork;
 %hook SBIconController
 // iOS 13-14
 -(instancetype)initWithApplicationController:(id)arg1 applicationPlaceholderController:(id)arg2 userInterfaceController:(id)arg3 policyAggregator:(id)arg4 alertItemsController:(id)arg5 assistantController:(id)arg6 {
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(nowPlayingAppDidChange) name:@"NowPlayingAppChanged" object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(nowPlayingAppDidTerminate) name:@"NowPlayingAppTerminated" object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(nowPlayingInfoDidChange) name:@"NowPlayingInfoChanged" object:nil];
+    [self registerForNowPlayingNotifications];
   return %orig;
 }
 
 // iOS 15
 -(id)initWithApplicationController:(id)arg1 applicationPlaceholderController:(id)arg2 userInterfaceController:(id)arg3 policyAggregator:(id)arg4 alertItemsController:(id)arg5 assistantController:(id)arg6 powerLogAggregator:(id)arg7 {
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(nowPlayingAppDidChange) name:@"NowPlayingAppChanged" object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(nowPlayingAppDidTerminate) name:@"NowPlayingAppTerminated" object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(nowPlayingInfoDidChange) name:@"NowPlayingInfoChanged" object:nil];
+    [self registerForNowPlayingNotifications];
     return %orig;
 }
 
 // iOS 16
 - (id)initWithMainDisplayWindowScene:(id)arg1 {
+    [self registerForNowPlayingNotifications];
+    return %orig;
+}
+
+%new
+- (void)registerForNowPlayingNotifications {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(nowPlayingAppDidChange) name:@"NowPlayingAppChanged" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(nowPlayingAppDidTerminate) name:@"NowPlayingAppTerminated" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(nowPlayingInfoDidChange) name:@"NowPlayingInfoChanged" object:nil];
-    return %orig;
 }
 
 %new
 -(void)nowPlayingInfoDidChange {
     MRMediaRemoteGetNowPlayingInfo(dispatch_get_main_queue(), ^(CFDictionaryRef information) {
-        //Check if artwork image is the same
+        // Check if artwork image is the same
         NSDictionary *nowPlayingInfo = (__bridge NSDictionary *)information;
         NSData *artworkData = [nowPlayingInfo objectForKey:(__bridge NSString *)kMRMediaRemoteNowPlayingInfoArtworkData];
         if (artworkData) {
