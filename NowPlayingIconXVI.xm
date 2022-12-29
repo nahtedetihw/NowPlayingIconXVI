@@ -16,7 +16,7 @@ UIImage *currentArtwork;
 UIImage *currentMaskedArtwork;
 
 %hook SBMediaController
--(void)_setNowPlayingApplication:(id)arg1 {
+-(void)_mediaRemoteNowPlayingApplicationDidChange:(id)arg1 {
     %orig;
     if (arg1 != nil) {
         [[NSNotificationCenter defaultCenter] postNotificationName:@"NowPlayingAppChanged" object:nil];
@@ -60,7 +60,6 @@ UIImage *currentMaskedArtwork;
 %new
 -(void)nowPlayingInfoDidChange {
     MRMediaRemoteGetNowPlayingInfo(dispatch_get_main_queue(), ^(CFDictionaryRef information) {
-        // Check if artwork image is the same
         NSDictionary *nowPlayingInfo = (__bridge NSDictionary *)information;
         NSData *artworkData = [nowPlayingInfo objectForKey:(__bridge NSString *)kMRMediaRemoteNowPlayingInfoArtworkData];
         if (artworkData) {
@@ -77,8 +76,7 @@ UIImage *currentMaskedArtwork;
             NSString *bundleID = nowPlayingApp.bundleIdentifier;
             if (bundleID != nil) {
             SBApplicationIcon *appIcon = [iconController.model applicationIconForBundleIdentifier:bundleID];
-            
-            //Set artwork for app
+
             if (currentArtwork != nil) [self setNowPlayingArtworkForApp:appIcon withArtwork:currentArtwork];
             lastNowPlayingBundleID = nowPlayingApp.bundleIdentifier;
             }
@@ -88,7 +86,6 @@ UIImage *currentMaskedArtwork;
 
 %new
 -(void)nowPlayingAppDidChange {
-    //Reset last icon when the app has changed
     SBIconController *iconController = [%c(SBIconController) sharedInstance];
     if (lastNowPlayingBundleID != nil) {
         SBApplicationIcon *appIcon = [iconController.model applicationIconForBundleIdentifier:lastNowPlayingBundleID];
@@ -105,7 +102,6 @@ UIImage *currentMaskedArtwork;
 
 %new
 -(void)nowPlayingAppDidTerminate {
-    //Reset last icon when the now playing app is killed
     SBIconController *iconController = [%c(SBIconController) sharedInstance];
     if (lastNowPlayingBundleID != nil) {
         SBApplicationIcon *appIcon = [iconController.model applicationIconForBundleIdentifier:lastNowPlayingBundleID];
@@ -142,8 +138,7 @@ UIImage *currentMaskedArtwork;
         [artLayer renderInContext:UIGraphicsGetCurrentContext()];
         currentMaskedArtwork = UIGraphicsGetImageFromCurrentImageContext();
         UIGraphicsEndImageContext();
-
-        //Update icon image caches and notify
+        
         for (SBHIconImageCache *cache in imageCaches) {
             [cache cacheImage:currentMaskedArtwork forIcon:appIcon];
             [cache notifyObserversOfUpdateForIcon:appIcon];
