@@ -1,6 +1,6 @@
 <p align="center" width="100%"><img width="15%" src="https://i.ibb.co/ZT6R3kG/Now-Playing-Icon-XVIIcon-copy.png"></p>
 
-<p align="center"><b><span style="font-size:20;">NowPlayingIconXVI</span></b></p>
+<p align="center"><b><font size="20">NowPlayingIconXVI</font></b></p>
 
 
 <p align="center" width="100%"><img width="80%" src="https://i.ibb.co/pzZrPFH/IMG-0008.jpg"></p>
