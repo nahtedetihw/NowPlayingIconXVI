@@ -1,8 +1,8 @@
-<div style="text-align:center"><img src="[https://i.ibb.co/ZT6R3kG/Now-Playing-Icon-XVIIcon-copy.png](https://i.ibb.co/ZT6R3kG/Now-Playing-Icon-XVIIcon-copy.png)" /></div>
+<div style="text-align:center"><img src="[[https://i.ibb.co/ZT6R3kG/Now-Playing-Icon-XVIIcon-copy.png](https://i.ibb.co/ZT6R3kG/Now-Playing-Icon-XVIIcon-copy.png)](https://i.ibb.co/ZT6R3kG/Now-Playing-Icon-XVIIcon-copy.png)" /></div>
 
 <div align="center"># NowPlayingIconXVI</div>
 
-<div style="text-align:center"><img src="[https://i.ibb.co/ZT6R3kG/Now-Playing-Icon-XVIIcon-copy.png](https://i.ibb.co/qWdWjKK/IMG-0008.jpg)" /></div>
+<div style="text-align:center"><img src="[[https://i.ibb.co/ZT6R3kG/Now-Playing-Icon-XVIIcon-copy.png](https://i.ibb.co/qWdWjKK/IMG-0008.jpg)](https://i.ibb.co/qWdWjKK/IMG-0008.jpg)" /></div>
 
 ### Change your now playing app icon to the album artwork of currently playing music!
 
