@@ -1,7 +1,7 @@
-![download](https://i.ibb.co/ZT6R3kG/Now-Playing-Icon-XVIIcon-copy.png)
+<p align="center"><img src="[[http://some_place.com/image.png](https://i.ibb.co/ZT6R3kG/Now-Playing-Icon-XVIIcon-copy.png)](https://i.ibb.co/ZT6R3kG/Now-Playing-Icon-XVIIcon-copy.png)" /></p>
 <div align="center"># NowPlayingIconXVI</div>
 
-![download](https://i.ibb.co/qWdWjKK/IMG-0008.jpg)
+<p align="center"><img src="[[http://some_place.com/image.png](https://i.ibb.co/qWdWjKK/IMG-0008.jpg)]([https://i.ibb.co/ZT6R3kG/Now-Playing-Icon-XVIIcon-copy.png](https://i.ibb.co/qWdWjKK/IMG-0008.jpg))" /></p>
 
 ### Change your now playing app icon to the album artwork of currently playing music!
 
