@@ -6,6 +6,7 @@
 <p align="center" width="100%"><img width="80%" src="https://i.ibb.co/pzZrPFH/IMG-0008.jpg"></p>
 
 ### Change your now playing app icon to the album artwork of currently playing music!
+* Tested on Apple Music, Pandora, Spotify
 
 * No options to configure, should work on iOS 13 - iOS 16
 
