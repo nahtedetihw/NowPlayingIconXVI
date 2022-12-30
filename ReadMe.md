@@ -10,7 +10,7 @@
 * No options to configure, should work on iOS 13 - iOS 16
 
 
-* Join my Discord today to report any issues: https://discord.gg/64kVRNzKnF
+** Join my Discord today to report any issues: https://discord.gg/64kVRNzKnF
 
 ### Source Code [https://github.com/nahtedetihw/NowPlayingIconXVI](https://github.com/nahtedetihw/NowPlayingIconXVI)
 
