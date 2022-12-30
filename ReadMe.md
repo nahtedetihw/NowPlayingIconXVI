@@ -7,6 +7,8 @@
 
 ### Change your now playing app icon to the album artwork of currently playing music!
 
+* No options to configure, should work on iOS 13 - iOS 16
+
 
 * Join my Discord today to report any issues: https://discord.gg/64kVRNzKnF
 
